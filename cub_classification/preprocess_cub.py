@@ -4,6 +4,11 @@ import csv
 from pathlib import Path
 from PIL import Image
 
+# preprocessing first, and keeping a copy is more efficient for our uses
+# it is possible to preprocess before running a specific image throught he model
+# trade-off - efficient to preprocess once vs. anticipating different configurations and write dataloader script to do this as requested
+
+
 def load_dict_from_txt(txt_path, has_index=True):
     output = {}
     with open(txt_path, "r") as f:
@@ -26,14 +31,14 @@ def load_dict_from_txt(txt_path, has_index=True):
                 output[idx] = class_name
     return output
 
-
+## resizing because NNs handle fixed-size inputs better
 def resize_image_and_bbox(in_path, out_path, bbox, target_size=(224, 224)):
     with Image.open(in_path) as img:
         img = img.convert("RGB")
         orig_w, orig_h = img.size
         new_w, new_h = target_size
 
-        # Resize
+        # Resize image
         img = img.resize((new_w, new_h), Image.BILINEAR)
 
         # Calculate bbox scale factors
