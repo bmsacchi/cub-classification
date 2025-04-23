@@ -187,6 +187,6 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
-lightning_logs/version_4/checkpoints/epoch=0-step=1499.ckpt
-lightning_logs/version_4/checkpoints/epoch=4-step=7495.ckpt
-lightning_logs/version_4/checkpoints/epoch=0-step=1499.ckpt
+lightning_logs/
+cub_classification_hyper/
+reports/cub_classification/

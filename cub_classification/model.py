@@ -30,35 +30,43 @@ class CUBModel(pl.LightningModule):
         # convolutional layers
         # 2d outputs
         # feature map has same dimesnions as image, flatten into 1d
-        self.conv1 = nn.Conv2d(3, 4, kernel_size=3, padding=1)
-        self.conv2 = nn.Conv2d(4, 8, kernel_size=3, padding =1)
-        self.pool = nn.MaxPool2d(2,2)
+        # self.conv1 = nn.Conv2d(3, 4, kernel_size=3, padding=1)
+        # self.conv2 = nn.Conv2d(4, 8, kernel_size=3, padding =1)
+        # self.pool = nn.MaxPool2d(2,2)
+        self.backbone = timm.create_model(
+            "timm/mobilenetv3_small_050.lamb_in1k",
+            pretrained=True,
+            num_classes=0
+        )
 
-        self.gap = nn.AdaptiveAvgPool2d((56, 56))
+        
+
+        #self.gap = nn.AdaptiveAvgPool2d((56, 56))
 
         self.classifier = nn.Sequential(
-            nn.Linear(8 * 56 * 56, 512),
+            nn.Linear(1024, 512),
             nn.ReLU(),
             nn.Linear(512, self.num_classes)
         )
 
         self.regressor = nn.Sequential(
-            nn.Linear(8 * 56 * 56, 512),
+            nn.Linear(1024, 512),
             nn.ReLU(),
             nn.Linear(512, 4)
         )
 
     def forward(self, x):
-        x = self.conv1(x)
-        x = F.relu(x) # non parametric - nothing needs to be learned during training
-        x = self.pool(x) # non parametric
+        x = self.backbone(x)
+        #x = self.conv1(x)
+        #x = F.relu(x) # non parametric - nothing needs to be learned during training
+        #x = self.pool(x) # non parametric
         
-        x = self.conv2(x)
-        x = F.relu(x)
-        x = self.pool(x)
+        #x = self.conv2(x)
+        #x = F.relu(x)
+        #x = self.pool(x)
 
-        x = self.gap(x)
-        x = x.view(x.size(0), -1) # convert to 1d
+        #x = self.gap(x)
+        #x = x.view(x.size(0), -1) # convert to 1d
 
         # Classifier
         x_classif = self.classifier(x)
