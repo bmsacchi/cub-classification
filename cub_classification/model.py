@@ -4,8 +4,8 @@ import torch.nn.functional as F
 from torch.optim import SGD
 
 
-class CUBModel(pl.LightningDataModule):
-    def __init__(:
+class CUBModel(pl.LightningModule):
+    def __init__(
         self, 
         num_classes=200,
         train_classification = True,
@@ -69,7 +69,7 @@ class CUBModel(pl.LightningDataModule):
 
 
     def training_step( self, batch, batch_idx):
-        images, (labels, bounding_boxe) = batch
+        images, (labels, bounding_boxes) = batch
         # make prediction
         labels_pred, bounding_boxes_pred = self(images)
 
@@ -95,7 +95,7 @@ class CUBModel(pl.LightningDataModule):
 
 
     def validation_step(self, batch, batch_idx):
-        images, (labels, bounding_boxe) = batch
+        images, (labels, bounding_boxes) = batch
         # make prediction
         labels_pred, bounding_boxes_pred = self(images)
 

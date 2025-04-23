@@ -1,6 +1,7 @@
 import csv
 from pathlib import Path
 import torch
+from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
 import pytorch_lightning as pl
 from PIL import Image
@@ -31,6 +32,9 @@ class CUBDataset(Dataset):
         # Load image
         with Image.open(img_path) as img:
             img = img.convert("RGB")
+            if self.transform:
+                img = self.transform(img)
+    
         
         # convert row number to zero-indexed class id
         class_id = int(row['class_id']) - 1
