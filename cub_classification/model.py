@@ -93,8 +93,32 @@ class CUBModel(pl.LightningDataModule):
         
         return loss
 
+
+    def validation_step(self, batch, batch_idx):
+        images, (labels, bounding_boxe) = batch
+        # make prediction
+        labels_pred, bounding_boxes_pred = self(images)
+
+        # calculate loss
+        loss = 0.0
+        # logging loss values in dict
+        log_dict = {} 
+
+        # logging classification loss, adding to total loss
+        if self.train_classification:
+            classification_loss = F.cross_entropy(labels_pred, labels) # what is cross entropy?
+            loss += self.classification_weight * classification_loss 
+            log_dict["val_classification_loss"] = classification_loss
+        # logging regresssion loss
+        if self.train_regression:
+            regression_loss = F.mse_loss(bounding_boxes_pred, bounding_boxes)
+            loss += self.regression_weight * regression_loss
+            log_dict["val_regression_loss"] = regression_loss
+        # log the values
+        self.log_dict(log_dict, prog_bar=True, on_epoch=True)
         
-    def validation_step
+        return loss
 
     # stochastic gradient descent optimizer
-    def configure_optimizers
+    def configure_optimizers(self):
+        return SGD(self.parameters(), lr = self.lr)
